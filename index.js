@@ -9,20 +9,51 @@ const io = new Server(server);
 
 app.use(express.static(path.resolve(__dirname, "./public")));
 
-const users = new Set();
+var allUsersName = [];
 
 io.on("connection", (socket) => {
+  //
   console.log(`connected id = ${socket.id}`);
 
-  users.add(socket.id);
-  console.log(Array.from(users));
+  // socket for getting all users name and there id's
+  socket.on("singleUserName", (userName) => {
+    // for adding the new user dtails
+    allUsersName.push(userName);
 
-  io.emit("users", Array.from(users));
+    // for sending the all user name and id's
+    io.emit("allUsersNameId", allUsersName);
+    console.log(allUsersName);
+  });
+
+  // for seding the messages
+  socket.on("chat", (msg) => {
+    console.log(msg.receiverId);
+    if (msg.senderId != msg.receiverId) {
+      io.to(msg.senderId).emit("message", msg);
+      io.to(msg.receiverId).emit("message", msg);
+    } else {
+      io.to(msg.receiverId).emit("message", msg);
+    }
+  });
 
   socket.on("disconnect", () => {
     console.log(`disconnected id = ${socket.id}`);
-    users.delete(socket.id);
-    io.emit("users", Array.from(users));
+
+    // to remove the user which is disconneted
+    allUsersName = allUsersName.filter((ele) => {
+      if (ele[0][0] !== socket.id) {
+        return ele;
+      }
+    });
+    allUsersName = allUsersName.filter((ele, index) => {
+      if (ele[0][1] != null) {
+        return ele;
+      }
+    });
+
+    // sends the updated users list
+    io.emit("allUsersNameId", allUsersName);
+    console.log(allUsersName, "dis");
   });
 });
 
