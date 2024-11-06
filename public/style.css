@@ -220,6 +220,10 @@ main {
   word-wrap: break-word;
 }
 
+.input-section{
+  position:relative;
+}
+
 .chat-input {
   position: absolute;
   bottom: 0;

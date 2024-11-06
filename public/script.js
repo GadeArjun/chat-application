@@ -3,12 +3,16 @@ const usersContainer = document.querySelector(".users-container");
 const userToggle = document.querySelector(".user-toggle");
 const userDetails = document.querySelector(".user-details");
 const inputSection = document.querySelector(".input-section");
-const chats = document.querySelector(".chats");
+const chats = document.querySelector("#chats");
 const notification = document.querySelector("#notification");
 
 //
 //
 //
+const socket = io();
+
+var allUsersNameId = [];
+var checkForExistance;
 
 // function for toggle
 function onUserToggle() {
@@ -111,12 +115,12 @@ function createNewUsers(name, id) {
 
           chats.appendChild(reciever);
         }
-        if (msgType == "self") {
-          const sender = document.createElement("div");
-          sender.className = "sender";
-          sender.innerText = `${msg}`;
-          chats.appendChild(sender);
-        }
+        chats.scrollTop = chats.scrollHeight + 20;
+        chats.addEventListener("scroll",()=>{
+          console.log(chats.scrollTop , chats.scrollHeight);
+          
+        })
+        
       }
       // all messages
       seperateMessage = () => {
@@ -208,32 +212,35 @@ checkUserSelection();
 
 // socket functions =>
 
-const socket = io();
 const singleUsersName = new Set();
 var userName;
 var senderId;
 
-socket.on("connect", () => {
+socket.on("connect", async () => {
   console.log(socket.id);
   senderId = socket.id;
 
   // for getting user name
   userName = prompt("Enter your name");
 
-  // for adding new user name
   singleUsersName.add([senderId, userName]);
 
   // for emmiting the single user name
   socket.emit("singleUserName", Array.from(singleUsersName));
+  console.log({ singleUsersName });
+  alert("start messaging...");
 });
 
 // for getting all users name and there id's
-socket.on("allUsersNameId", (allUsersNameId) => {
-  console.log({ allUsersNameId });
+socket.on("allUsersNameId", (allUsers) => {
+  console.log({ allUsers });
+  allUsersNameId = allUsers;
+
   users.innerHTML = "";
+  console.log({ allUsersNameId });
 
   allUsersNameId.forEach((ele) => {
-    createNewUsers(ele[0][1], ele[0][0]);
+    createNewUsers(ele[1], ele[0]);
   });
 });
 
@@ -266,7 +273,7 @@ socket.on("message", (message) => {
 socket.on("disconnect", () => {
   // for remove the disconnected user
   singleUsersName.delete([senderId, userName]);
-  socket.emit("singleUserName", Array.from(singleUsersName));
+  // socket.emit("singleUserName", Array.from(singleUsersName));
 
   // sending the updating user list
 });
