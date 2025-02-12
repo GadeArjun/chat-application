@@ -10,6 +10,7 @@ const io = new Server(server);
 app.use(express.static(path.resolve(__dirname, "./public")));
 
 var allUsersName = [];
+// for user count
 var userCount = 0;
 io.on("connection", (socket) => {
   //
