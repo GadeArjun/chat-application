@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --------------------------------
+   Global Resets & Base Styles
+-----------------------------------*/
+html,
+body {
+  @apply bg-slate-900 text-gray-200 scroll-smooth;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+* {
+  @apply box-border;
+}
+
+/* --------------------------------
+   Custom Animations
+-----------------------------------*/
+
+/* Wave background animation (for /wave.svg) */
+@keyframes wave {
+  from {
+    background-position-x: 0;
+  }
+  to {
+    background-position-x: 1000px;
+  }
+}
+.animate-wave {
+  animation: wave 30s linear infinite;
+}
+
+/* Twinkle animation for extra subtle star flicker */
+@keyframes twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+/* Pulse (used in hero gradients) */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.animate-pulse-soft {
+  animation: pulse-soft 5s ease-in-out infinite;
+}
+
+/* --------------------------------
+   Gradient Utilities Fix
+-----------------------------------*/
+
+/* Tailwind doesn't allow `stop-color-*` directly inside <stop>.
+   We can fix it by defining CSS variables here and applying them.
+*/
+.stop-color-indigo-500 { stop-color: theme('colors.indigo.500'); }
+.stop-color-purple-600 { stop-color: theme('colors.purple.600'); }
+.stop-color-pink-500   { stop-color: theme('colors.pink.500'); }
+
+/* --------------------------------
+   Scrollbar Styling (optional)
+-----------------------------------*/
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #6366f1, #9333ea, #ec4899);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
